@@ -68,6 +68,8 @@ class _GaleriYoutubeState extends State<GaleriYoutube> {
                             height: 200,
                             fit: BoxFit.cover,
                           ),
+
+
                             Positioned(
                               left: 0,
                               right: 0,
