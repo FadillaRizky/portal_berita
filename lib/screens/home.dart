@@ -1,19 +1,33 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:portal_berita/api/api.dart';
+import 'package:portal_berita/screens/baca_nanti.dart';
 import 'package:portal_berita/screens/berita_screen.dart';
-import 'package:portal_berita/screens/lifestyle.dart';
-import 'package:portal_berita/screens/politik.dart';
-import 'package:portal_berita/screens/sport.dart';
+import 'package:portal_berita/screens/profile_screen.dart';
+import 'package:portal_berita/screens/tentang_aplikasi.dart';
+import 'package:portal_berita/screens/utils/alerts.dart';
 import 'package:portal_berita/screens/videos_screen.dart';
 
+import '../api/ListKategoriBeritaResponse.dart';
 import '../constants.dart';
+import 'home_widgets/subscreen_tabbar.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  Future<ListKategoriBeritaResponse> dataKategori = Api.getListKategoriBerita();
+  List<DataKategori> listKategori = [];
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 2 + listKategori.length,
       child: Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.indigo),
@@ -27,24 +41,21 @@ class Home extends StatelessWidget {
             actions: [
               GestureDetector(
                 onTap: () {},
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Icon(
-                    Icons.search,
-                    color: Colors.indigo,
-                    size: 33,
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  height: 40,
-                  width: 40,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        'https://instagram.fjog3-1.fna.fbcdn.net/v/t51.2885-19/294589443_1474258339675546_1246384686459467222_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fjog3-1.fna.fbcdn.net&_nc_cat=110&_nc_ohc=QX3OdpTJVscAX_5aEjg&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AT8qci6S4rGkuQjgIKV1FJd-Rlrd7hW90TTBcU0RDQFFlA&oe=62E58EA0&_nc_sid=8fd12b'),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfileScreen( ))).then((value){
+                      setState(() {
+
+                      });
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: 10),
+                    height: 50,
+                    width: 50,
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage("assets/images/fotogweh.jpg"),
+                    ),
                   ),
                 ),
               ),
@@ -60,20 +71,42 @@ class Home extends StatelessWidget {
                 Tab(
                   text: 'Terkini',
                 ),
-                Tab(text: "OlahRaga"),
-                Tab(text: "GayaHidup"),
-                Tab(text: "Politik"),
+                for (var value in listKategori)
+                  Tab(
+                    text: value.kategori!,
+                  ),
                 Tab(text: "Video"),
               ],
             ),
           ),
-          body: TabBarView(
+          body: Stack(
             children: [
-              BeritaScreen(),
-              SportScreen(),
-              PolitikScreen(),
-              LifeStyleScreen(),
-              GaleriYoutube()
+              TabBarView(
+                children: [
+                  BeritaScreen(),
+                  for (var value in listKategori) SubScreenTabbar(value: value),
+                  GaleriYoutube()
+                ],
+              ),
+              FutureBuilder(
+                future: dataKategori,
+                builder: (context,
+                    AsyncSnapshot<ListKategoriBeritaResponse> snapshot) {
+                  if (snapshot.hasData) {
+                    // ketika proses build sudah selesai,baru bisa d setstate()
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      setState(() {
+                        listKategori = snapshot.data!.dataKategori!;
+                      });
+                    });
+
+                    return SizedBox();
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              )
             ],
           ),
           drawer: Drawer(
@@ -91,9 +124,8 @@ class Home extends StatelessWidget {
                       height: 80,
                       width: 80,
                       child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://instagram.fjog3-1.fna.fbcdn.net/v/t51.2885-19/294589443_1474258339675546_1246384686459467222_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fjog3-1.fna.fbcdn.net&_nc_cat=110&_nc_ohc=QX3OdpTJVscAX_5aEjg&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AT8qci6S4rGkuQjgIKV1FJd-Rlrd7hW90TTBcU0RDQFFlA&oe=62E58EA0&_nc_sid=8fd12b'),
-                      ),
+                          backgroundImage:
+                              AssetImage("assets/images/fotogweh.jpg")),
                     ),
                     onTap: () {
                       // Update the state of the app.
@@ -110,21 +142,13 @@ class Home extends StatelessWidget {
                   ),
                   ListItem(
                     title: 'Baca Nanti',
-                  ),
-                  Container(
-                    color: Colors.black12,
-                    padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                    child: Text(
-                      'Pengaturan',
-                      style: Constants.subTitle,
-                    ),
-                  ),
-                  ListItem(title: 'Pengaturan Minat Untukmu'),
-                  ListItem(
-                    title: 'Notifikasi',
-                  ),
-                  ListItem(
-                    title: 'Ukuran Font Baca',
+                    ontap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => BacaNanti(),
+                        ),
+                      );
+                    },
                   ),
                   Container(
                     color: Colors.black12,
@@ -136,8 +160,25 @@ class Home extends StatelessWidget {
                   ),
                   ListItem(
                     title: 'Tentang Aplikasi',
+                    ontap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => TentangApp()));
+                    },
                   ),
-                  ListItem(title: 'Keluar')
+                  ListItem(
+                    title: 'Keluar',
+                    ontap: () {
+                      Alerts.showAlertYesNo(
+                          title: "Keluar Aplikasi",
+                          content: "Afakah anda yaqin??",
+                          onPressYes: () {
+                            exit(0);
+                          },
+                          onPressNo: () {
+                            return Navigator.of(context).pop();
+                          },
+                          context: context);
+                    },
+                  )
                 ],
               ),
             ),
@@ -147,11 +188,13 @@ class Home extends StatelessWidget {
 }
 
 class ListItem extends StatelessWidget {
+  final VoidCallback? ontap;
   final String title;
 
   const ListItem({
     Key? key,
     required this.title,
+    this.ontap,
   }) : super(key: key);
 
   @override
@@ -159,7 +202,7 @@ class ListItem extends StatelessWidget {
     return ListTile(
       title: Text(title),
       trailing: Icon(Icons.arrow_forward),
-      onTap: (){},
+      onTap: ontap,
     );
   }
 }

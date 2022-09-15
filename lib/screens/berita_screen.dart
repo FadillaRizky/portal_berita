@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:portal_berita/api/GetListBeritaResponse.dart';
 import 'package:portal_berita/constants.dart';
 import 'package:portal_berita/screens/detail_screen.dart';
+import 'package:portal_berita/screens/utils/alerts.dart';
+import 'package:portal_berita/screens/utils/login_pref.dart';
 import '../api/api.dart';
+import 'auth/Login.dart';
 
 class BeritaScreen extends StatefulWidget {
   const BeritaScreen({Key? key}) : super(key: key);
@@ -15,7 +18,6 @@ class _BeritaScreenState extends State<BeritaScreen> {
   // buat variabel result untuk menampung data responsenya
   //untuk sementara , dibuat kosong dulu
   List<DataBerita> result = [];
-
   // untuk eksekusi apinya
   void getListBerita() {
     //then adalah kondisi dimana future melakukan callback setelah mendapatkan data response dari webservice
@@ -25,6 +27,34 @@ class _BeritaScreenState extends State<BeritaScreen> {
         result = value.dataBerita!;
       });
     });
+  }
+
+  submitReadLater(BuildContext context, String idBerita2) async {
+    LoginPref.checkPref().then((value) {
+      if (value == false) {
+        Alerts.showMessage("Login dulu cuyy..", context);
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+      }
+    });
+    var dataUser = await LoginPref.getPref();
+    var idUser = dataUser.idUser!;
+    var idBerita = idBerita2;
+
+    //kelompokan data email dan password
+    var data = {
+      "id_user": idUser,
+      "id_berita": idBerita,
+    };
+
+    Api.submitReadLater(data).then(
+      (value) async {
+        if (value.message == "data read later ditambahkan") {
+
+        }
+        Alerts.showMessage(value.message!, context);
+      },
+    );
   }
 
   @override
@@ -54,7 +84,7 @@ class _BeritaScreenState extends State<BeritaScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => DetailScreen(
-                          idBerita: result[index].idBerita!,
+                          idBerita: result[index].idBerita!, 
                         ),
                       ),
                     );
@@ -70,6 +100,10 @@ class _BeritaScreenState extends State<BeritaScreen> {
                             width: double.infinity,
                             height: 300,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, obj, stackTrace) {
+                              return Image.asset(
+                                  "assets/images/place_holder.jpeg");
+                            },
                           ),
                         ),
                         Positioned(
@@ -115,6 +149,27 @@ class _BeritaScreenState extends State<BeritaScreen> {
                             ),
                           ),
                         ),
+                        Positioned(
+                          top: 0,
+                          right: 10,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+
+                                submitReadLater(
+                                  context,
+                                  result[index].idBerita!,
+                                );
+
+                                return;
+                              });
+                            },
+                            icon: Icon(Icons.bookmark_add,
+                              size: 40,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),

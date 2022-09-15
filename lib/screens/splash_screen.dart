@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portal_berita/screens/auth/Login.dart';
 import 'package:portal_berita/screens/home.dart';
 
 class SplashScreen extends StatelessWidget {
