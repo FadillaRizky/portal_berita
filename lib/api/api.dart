@@ -8,6 +8,7 @@ import 'package:portal_berita/api/ListKategoriBeritaResponse.dart';
 import 'package:portal_berita/api/ReadLaterResponse.dart';
 import 'package:portal_berita/api/SubmitReadLater.dart';
 
+import 'GetCommentResponse.dart';
 import 'auth/LoginResponse.dart';
 import 'auth/RegisterResponse.dart';
 
@@ -124,6 +125,18 @@ class Api {
     } else {
       throw "Unable to submit read later";
     }
+  }
+  static Future<GetCommentResponse> getComment(String idBerita) async{
+    var url = "$BASE_URL/get_comment.php?id_berita=$idBerita";
+    // print(url);
+    var response = await http.get(Uri.parse(url));
+    //jika response adalah 200
+    if(response.statusCode == 200){
+      //maka kembalikan data response
+      return GetCommentResponse.fromJson(jsonDecode(response.body));
+    }
+    //jika tidak,muncul pesan error
+    throw "Gagal request komentar:\n${response.body}";
   }
 
 }

@@ -4,6 +4,7 @@ import 'package:portal_berita/api/GetDetailResponse.dart';
 import 'package:portal_berita/screens/profile_screen.dart';
 import 'package:portal_berita/screens/utils/alerts.dart';
 import 'package:portal_berita/screens/utils/login_pref.dart';
+import '../api/GetCommentResponse.dart';
 import '../api/api.dart';
 import 'package:portal_berita/constants.dart';
 
@@ -19,9 +20,13 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  SubmitComment()async{
-    LoginPref.checkPref().then((value){
-      if(value == false){
+  Future<GetCommentResponse>? getComment;
+
+
+
+  SubmitComment() async {
+    LoginPref.checkPref().then((value) {
+      if (value == false) {
         Alerts.showMessage("Login dulu cuyy..", context);
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
@@ -46,8 +51,8 @@ class _DetailScreenState extends State<DetailScreen> {
 
   final formKey = GlobalKey<FormState>();
   final TextEditingController commentController = TextEditingController();
-  List filedata = [
 
+  List filedata = [
   ];
   TextEditingController controllerkomen = TextEditingController();
 
@@ -60,6 +65,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     listDetailBerita = Api.getDetailBerita(widget.idBerita);
+    getComment = Api.getComment(widget.idBerita);
     super.initState();
   }
 
@@ -144,40 +150,57 @@ class _DetailScreenState extends State<DetailScreen> {
               dataBerita.isi ?? "",
               style: Constants.paragraph2,
             ),
-        Text("Komentar",style:Constants.heading2,),
-        SizedBox(
-          height: 300,
-          child: CommentBox(
-            userImage:
-            ProfileScreen.photo,
-            child: commentChild(filedata),
-            labelText: 'Write a comment...',
-            withBorder: false,
-            errorText: 'Comment cannot be blank',
-            sendButtonMethod: () {
-              setState(() {
-                SubmitComment();
-                return;
-              });
-            },
-            formKey: formKey,
-            commentController: commentController,
-            backgroundColor: Colors.black54,
-            textColor: Colors.white,
-            sendWidget: Icon(Icons.send_sharp, size: 30, color: Colors.white),
-          ),
-        ),
-                ],
+            Text("Komentar", style: Constants.heading2,),
+            SizedBox(
+              height: 300,
+              child: CommentBox(
+                userImage:
+                ProfileScreen.photo,
+                child: commentChild(),
+                labelText: 'Write a comment...',
+                withBorder: false,
+                errorText: 'Comment cannot be blank',
+                sendButtonMethod: () {
+                  setState(() {
+                    SubmitComment();
+                    return;
+                  });
+                },
+                formKey: formKey,
+                commentController: commentController,
+                backgroundColor: Colors.black54,
+                textColor: Colors.white,
+                sendWidget: Icon(
+                    Icons.send_sharp, size: 30, color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
     ]);
   }
-}
-Widget commentChild(data) {
-  return ListView(
-    children: [
-      for (var i = 0; i < data.length; i++)
-        Padding(
+
+  Widget commentChild() {
+    return FutureBuilder(
+      future: getComment,
+      builder: (context,AsyncSnapshot<GetCommentResponse>snapshot) {
+        if(snapshot.hasData){
+          return showComment(snapshot.data!.data!);
+        }
+        if(snapshot.hasError){
+          return Center(child: Text("Something went wrong : ${snapshot.error}"));
+        }
+        return Center(child: CircularProgressIndicator());
+
+    },
+    );
+  }
+
+  ListView showComment(List<Data> comments) {
+    return ListView.builder(
+      itemCount: comments.length,
+      itemBuilder: (context, index) {
+        return Padding(
           padding: const EdgeInsets.fromLTRB(2.0, 8.0, 2.0, 0.0),
           child: ListTile(
             leading: GestureDetector(
@@ -193,16 +216,21 @@ Widget commentChild(data) {
                     borderRadius: new BorderRadius.all(Radius.circular(50))),
                 child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(data[i]['pic'] + "$i")),
+                    backgroundImage: NetworkImage(comments[index].profilepicture ?? "https://pertaniansehat.com/v01/wp-content/uploads/2015/08/default-placeholder.png")),
               ),
             ),
             title: Text(
-              data[i]['name'],
+              comments[index].username!,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(data[i]['message']),
+            subtitle: Text(comments[index].komentar!),
+            trailing: Text(comments[index].tanggal!),
           ),
-        )
-    ],
-  );
+        );
+      },
+
+
+    );
+  }
 }
+
