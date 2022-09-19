@@ -3,10 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'data_user.dart';
 
 class LoginPref {
-  static Future<bool> saveToSharedPref(String idUser, String username) async {
+  static Future<bool> saveToSharedPref(String idUser, String username,String email) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString("id_user", idUser);
     pref.setString("username", username);
+    pref.setString("email", email);
+
     return true;
   }
 
@@ -24,6 +26,7 @@ class LoginPref {
     DataUser dataUser = DataUser();
     dataUser.idUser = pref.getString("id_user");
     dataUser.username = pref.getString("username");
+    dataUser.email = pref.getString("email");
     return dataUser;
   }
   static Future<bool> removePref() async{
@@ -31,4 +34,5 @@ class LoginPref {
     await pref.clear();
     return true;
   }
+
 }

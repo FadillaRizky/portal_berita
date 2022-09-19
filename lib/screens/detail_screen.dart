@@ -31,13 +31,14 @@ class _DetailScreenState extends State<DetailScreen> {
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
       }
+
       if (formKey.currentState!.validate()) {
         print(commentController.text);
         setState(() {
           var value = {
-            'name': ProfileScreen.name,
-            'pic': ProfileScreen.photo,
-            'message': commentController.text
+            'name': "yanto",
+            'pic': "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80",
+            'komentar': commentController.text
           };
           filedata.insert(0, value);
         });
@@ -47,6 +48,18 @@ class _DetailScreenState extends State<DetailScreen> {
         print("Not validated");
       }
     });
+    var dataUser = await LoginPref.getPref();
+    var komen = {
+      "id_berita": widget.idBerita,
+      "id_user": dataUser.idUser.toString(),
+      "komentar" : commentController.text
+    };
+    Api.submitKomen(komen).then((value){
+      Alerts.showMessage(value.message!, context);
+    } ).catchError((error) {
+    //jika register gagal,maka muncul pesan error
+    Alerts.showMessage(error, context);
+    });
   }
 
   final formKey = GlobalKey<FormState>();
@@ -54,11 +67,8 @@ class _DetailScreenState extends State<DetailScreen> {
 
   List filedata = [
   ];
-  TextEditingController controllerkomen = TextEditingController();
 
-  komen() {
-    var komen = controllerkomen.text;
-  }
+
 
   Future<GetDetailResponse>? listDetailBerita;
 
@@ -154,8 +164,7 @@ class _DetailScreenState extends State<DetailScreen> {
             SizedBox(
               height: 300,
               child: CommentBox(
-                userImage:
-                ProfileScreen.photo,
+                userImage:"https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80",
                 child: commentChild(),
                 labelText: 'Write a comment...',
                 withBorder: false,
@@ -163,6 +172,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 sendButtonMethod: () {
                   setState(() {
                     SubmitComment();
+                    // print(controllerkomen.text);
                     return;
                   });
                 },

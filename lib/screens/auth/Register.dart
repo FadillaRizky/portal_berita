@@ -134,7 +134,7 @@ class _RegisterState extends State<Register> {
                   fillColor: Colors.black12,
                   hintText: 'Password',
                   suffixIcon: IconButton(
-                    icon: Icon((invisible == true)
+                    icon: Icon((invisible == false)
                         ? Icons.visibility
                         : Icons.visibility_off),
                     onPressed: () {
@@ -151,7 +151,7 @@ class _RegisterState extends State<Register> {
               width: double.infinity,
               child: TextFormField(
                 controller: controllerConfirmPassword,
-                obscureText: invisible,
+                obscureText: invisible2,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -161,7 +161,7 @@ class _RegisterState extends State<Register> {
                   fillColor: Colors.black12,
                   hintText: 'Confirm Password',
                   suffixIcon: IconButton(
-                    icon: Icon((invisible2 == true)
+                    icon: Icon((invisible2 == false)
                         ? Icons.visibility
                         : Icons.visibility_off),
                     onPressed: () {

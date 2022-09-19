@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:http/http.dart'as http;
+import 'package:portal_berita/api/EditProfileResponse.dart';
+import 'package:portal_berita/api/GetDetailProfileResponse.dart';
 import 'package:portal_berita/api/GetDetailResponse.dart';
 import 'package:portal_berita/api/GetListBeritaResponse.dart';
 import 'package:portal_berita/api/ListBeritaByKategoriResponse.dart';
 import 'package:portal_berita/api/ListKategoriBeritaResponse.dart';
 import 'package:portal_berita/api/ReadLaterResponse.dart';
+import 'package:portal_berita/api/SubmitKomenResponse.dart';
 import 'package:portal_berita/api/SubmitReadLater.dart';
+import 'package:portal_berita/screens/edit_profile.dart';
 
 import 'GetCommentResponse.dart';
 import 'auth/LoginResponse.dart';
@@ -137,6 +141,40 @@ class Api {
     }
     //jika tidak,muncul pesan error
     throw "Gagal request komentar:\n${response.body}";
+  }
+  static Future<SubmitKomenResponse> submitKomen(Map<String,String>komenUser) async {
+    var url = BASE_URL + "/submit_comment.php";
+
+    var response = await http.post(Uri.parse(url),body: komenUser);
+
+    if (response.statusCode == 200) {
+      return SubmitKomenResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw "Unable to submit Komentar";
+    }
+  }
+  static Future<EditProfileResponse> submitEditProfile(Map<String,dynamic> dataUser) async {
+    var url = BASE_URL + "/edit_profile.php";
+
+    var response = await http.post(Uri.parse(url),body: dataUser);
+
+    if (response.statusCode == 200) {
+      return EditProfileResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw "Gagal Edit Profile: \n${response.body}";
+    }
+  }
+  static Future<GetDetailProfileResponse> getDetailProfile(String idUser) async{
+    var url = "$BASE_URL/get_detail_profile.php?id=$idUser";
+    // print(url);
+    var response = await http.get(Uri.parse(url));
+    //jika response adalah 200
+    if(response.statusCode == 200){
+      //maka kembalikan data response
+      return GetDetailProfileResponse.fromJson(jsonDecode(response.body));
+    }
+    //jika tidak,muncul pesan error
+    throw "Gagal request detail profile:\n${response.body}";
   }
 
 }

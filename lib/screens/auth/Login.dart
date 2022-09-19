@@ -50,6 +50,7 @@ class _LoginState extends State<Login> {
         LoginPref.saveToSharedPref(
           value.dataUser!.idUser!,
           value.dataUser!.username!,
+          value.dataUser!.email!,
         );
 
         //cek apakah pref yang sudah di save, benar benar tersimpan?
