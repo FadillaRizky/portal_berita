@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:portal_berita/api/GetCommentResponse.dart';
 import 'package:portal_berita/api/api.dart';
+import 'package:portal_berita/api/auth/LoginResponse.dart';
 import 'package:portal_berita/screens/baca_nanti.dart';
 import 'package:portal_berita/screens/berita_screen.dart';
 import 'package:portal_berita/screens/profile_screen.dart';
 import 'package:portal_berita/screens/tentang_aplikasi.dart';
 import 'package:portal_berita/screens/utils/alerts.dart';
+import 'package:portal_berita/screens/utils/login_pref.dart';
 import 'package:portal_berita/screens/videos_screen.dart';
 
 import '../api/ListKategoriBeritaResponse.dart';
@@ -23,6 +26,34 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Future<ListKategoriBeritaResponse> dataKategori = Api.getListKategoriBerita();
   List<DataKategori> listKategori = [];
+
+  DataUser dataUser = DataUser();
+
+  getUserData(){
+    LoginPref.checkPref().then((value) {
+      if (value == true) {
+        LoginPref.getPref().then((value) {
+          setState((){
+            dataUser = DataUser(
+              idUser: value.idUser,
+              username: value.username,
+              email: value.email,
+              profilepicture: value.profileimage,
+            );
+          });
+          print("HOME : " + value.profileimage.toString());
+
+        });
+      }
+      dataUser = DataUser();
+
+    });
+  }
+  @override
+  void initState() {
+    getUserData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +75,9 @@ class _HomeState extends State<Home> {
                 child: GestureDetector(
                   onTap: (){
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfileScreen( ))).then((value){
-                      setState(() {
 
-                      });
+                        getUserData();
+
                     });
                   },
                   child: Container(
@@ -54,7 +85,7 @@ class _HomeState extends State<Home> {
                     height: 50,
                     width: 50,
                     child: CircleAvatar(
-                      backgroundImage: AssetImage("assets/images/fotogweh.jpg"),
+                      backgroundImage: NetworkImage((dataUser.profilepicture != "null" && dataUser.profilepicture != null ) ? Api.IMG_URL + "profile_user/" + dataUser.profilepicture : "https://www.pngkey.com/png/full/349-3499617_person-placeholder-person-placeholder.png"),
                     ),
                   ),
                 ),
@@ -116,16 +147,16 @@ class _HomeState extends State<Home> {
                 children: [
                   ListTile(
                     title: Text(
-                      'Hi, Fadillarizky !',
+                      dataUser.username ?? "Guest",
                       style: Constants.subTitle,
                     ),
-                    subtitle: Text('fadillarizky294@gmail.com'),
+                    subtitle: Text(dataUser.email ?? ""),
                     leading: SizedBox(
                       height: 80,
                       width: 80,
                       child: CircleAvatar(
                           backgroundImage:
-                              AssetImage("assets/images/fotogweh.jpg")),
+                          NetworkImage((dataUser.profilepicture != "null" && dataUser.profilepicture != null ) ? Api.IMG_URL + "profile_user/" + dataUser.profilepicture : "https://www.pngkey.com/png/full/349-3499617_person-placeholder-person-placeholder.png"),),
                     ),
                     onTap: () {
                       // Update the state of the app.

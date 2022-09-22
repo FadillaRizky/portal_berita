@@ -19,11 +19,11 @@ import 'auth/RegisterResponse.dart';
 // buat variabel konstanta dan global sebagai url api dasar
   //LOCAL_URL = "http://localhost/web_portal_berita/api";
 // HOSTING_URL = "https://fadillarizky.enricko.com/api";
-const BASE_URL = "http://192.168.18.18/web_portal_berita/api";
+const BASE_URL = "http://fadillarizky.enricko.com/api";
 
 class Api {
 
-  static String IMG_URL = "http://192.168.18.18/web_portal_berita/images/";
+  static String IMG_URL = "http://fadillarizky.enricko.com/images/";
   // membuat function dengan keyword static
   // Future = mendapat nilai dimasa yang akan datang setelah melakukan request api
   // var response = untuk melakukan request kemudian menunggu (await) response dari webservice

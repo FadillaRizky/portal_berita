@@ -9,6 +9,7 @@ import 'package:portal_berita/screens/utils/login_pref.dart';
 import '../api/GetDetailProfileResponse.dart';
 import '../api/api.dart';
 import 'edit_profile.dart';
+import 'home.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({

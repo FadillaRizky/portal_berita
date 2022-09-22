@@ -41,8 +41,8 @@ class _EditProfileState extends State<EditProfile> {
           children: [
             (isLoading == true)
                 ? Center(
-                    child: CircularProgressIndicator(),
-                  )
+              child: CircularProgressIndicator(),
+            )
                 : SizedBox(),
             Column(
               children: [
@@ -81,21 +81,21 @@ class _EditProfileState extends State<EditProfile> {
                               decoration: BoxDecoration(color: Colors.red[200]),
                               child: path != null
                                   ? Image.file(
-                                      image,
-                                      height: 100,
-                                      width: 100,
-                                      fit: BoxFit.cover,
-                                    )
+                                image,
+                                height: 100,
+                                width: 100,
+                                fit: BoxFit.cover,
+                              )
                                   : Container(
-                                      decoration:
-                                          BoxDecoration(color: Colors.red[200]),
-                                      width: 200,
-                                      height: 200,
-                                      child: Icon(
-                                        Icons.camera_alt,
-                                        color: Colors.grey[800],
-                                      ),
-                                    ),
+                                decoration:
+                                BoxDecoration(color: Colors.red[200]),
+                                width: 200,
+                                height: 200,
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
                             )),
                         Positioned(
                           bottom: 1,
@@ -131,9 +131,9 @@ class _EditProfileState extends State<EditProfile> {
                   child: ElevatedButton(
                     style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(Colors.green)),
+                        MaterialStateProperty.all(Colors.green)),
                     onPressed: () {
-                      setState((){
+                      setState(() {
                         isLoading = true;
                       });
 
@@ -153,7 +153,7 @@ class _EditProfileState extends State<EditProfile> {
   applyUpdates() {
     String? base64Image;
     //konversi dari gambar ke base64
-    if(path != null){
+    if (path != null) {
       base64Image = base64Encode(File(path.toString()).readAsBytesSync());
     }
 
@@ -166,9 +166,17 @@ class _EditProfileState extends State<EditProfile> {
         "id_user": value.idUser
       };
       Api.submitEditProfile(data).then((value) {
-        setState((){
+        setState(() {
           isLoading = false;
         });
+        if (value.dataUser != null) {
+          LoginPref.saveToSharedPref(
+              value.dataUser!.idUser!,
+              value.dataUser!.username!,
+              value.dataUser!.email!,
+              value.dataUser!.profilepicture!);
+        }
+
 
         Alerts.showMessage(value.message!, context);
         Navigator.of(context).pop();

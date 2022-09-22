@@ -51,6 +51,7 @@ class _LoginState extends State<Login> {
           value.dataUser!.idUser!,
           value.dataUser!.username!,
           value.dataUser!.email!,
+          value.dataUser!.profilepicture!,
         );
 
         //cek apakah pref yang sudah di save, benar benar tersimpan?

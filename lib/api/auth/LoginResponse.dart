@@ -1,4 +1,4 @@
-/// data_user : {"id_user":"2","username":"fadillarizky","email":"fadillarizky294@gmail.com","password":"eeedb760af13ddc1fe2a5aa3041ce9a7"}
+/// data_user : {"id_user":"2","username":"fadillarizky","email":"fadillarizky294@gmail.com","password":"eeedb760af13ddc1fe2a5aa3041ce9a7","profilepicture":null}
 /// response : 200
 /// message : "data ditemukan"
 
@@ -47,17 +47,20 @@ LoginResponse copyWith({  DataUser? dataUser,
 /// username : "fadillarizky"
 /// email : "fadillarizky294@gmail.com"
 /// password : "eeedb760af13ddc1fe2a5aa3041ce9a7"
+/// profilepicture : null
 
 class DataUser {
   DataUser({
       String? idUser, 
       String? username, 
       String? email, 
-      String? password,}){
+      String? password, 
+      dynamic profilepicture,}){
     _idUser = idUser;
     _username = username;
     _email = email;
     _password = password;
+    _profilepicture = profilepicture;
 }
 
   DataUser.fromJson(dynamic json) {
@@ -65,24 +68,29 @@ class DataUser {
     _username = json['username'];
     _email = json['email'];
     _password = json['password'];
+    _profilepicture = json['profilepicture'];
   }
   String? _idUser;
   String? _username;
   String? _email;
   String? _password;
+  dynamic _profilepicture;
 DataUser copyWith({  String? idUser,
   String? username,
   String? email,
   String? password,
+  dynamic profilepicture,
 }) => DataUser(  idUser: idUser ?? _idUser,
   username: username ?? _username,
   email: email ?? _email,
   password: password ?? _password,
+  profilepicture: profilepicture ?? _profilepicture,
 );
   String? get idUser => _idUser;
   String? get username => _username;
   String? get email => _email;
   String? get password => _password;
+  dynamic get profilepicture => _profilepicture;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -90,6 +98,7 @@ DataUser copyWith({  String? idUser,
     map['username'] = _username;
     map['email'] = _email;
     map['password'] = _password;
+    map['profilepicture'] = _profilepicture;
     return map;
   }
 
