@@ -20,6 +20,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
   Future<GetDetailProfileResponse>? getProfile;
   String? idUser;
 
@@ -35,11 +36,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  @override
-  void initState() {
+
+  showDataProfile(){
     checkLogin().then((value) {
       getProfile = Api.getDetailProfile(idUser!);
     });
+  }
+
+  @override
+  void initState() {
+    showDataProfile();
+    // checkLogin().then((value) {
+    //   getProfile = Api.getDetailProfile(idUser!);
+    // });
 
     super.initState();
   }
@@ -123,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           builder: (context) => EditProfile()))
                       .then((value) {
                     setState(() {
-
+                      showDataProfile();
                     });
                   });
                 },
