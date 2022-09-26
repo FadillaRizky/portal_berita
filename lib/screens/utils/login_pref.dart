@@ -5,10 +5,12 @@ import 'data_user.dart';
 class LoginPref {
   static Future<bool> saveToSharedPref(String idUser, String username,String email,String image) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
+
     pref.setString("id_user", idUser);
     pref.setString("username", username);
     pref.setString("email", email);
     pref.setString("profileimage",image);
+    pref.reload();
 
     return true;
   }

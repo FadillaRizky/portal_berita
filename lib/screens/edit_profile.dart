@@ -165,21 +165,27 @@ class _EditProfileState extends State<EditProfile> {
         "profileimage": (path != null) ? base64Image : "",
         "id_user": value.idUser
       };
-      Api.submitEditProfile(data).then((value) {
+      Api.submitEditProfile(data).then((value) async {
         setState(() {
           isLoading = false;
         });
         if (value.dataUser != null) {
+
           LoginPref.saveToSharedPref(
               value.dataUser!.idUser!,
               value.dataUser!.username!,
               value.dataUser!.email!,
-              value.dataUser!.profilepicture!);
+              value.dataUser!.profilepicture!).then((value) {
+            print("Save pref selesai======");
+            // Alerts.showMessage(value.message!, context);
+            Navigator.of(context).pop();
+          });
+
+        }else{
+          print("Data user kosong======");
+          Alerts.showMessage(value.message!, context);
+          Navigator.of(context).pop();
         }
-
-
-        Alerts.showMessage(value.message!, context);
-        Navigator.of(context).pop();
       });
     });
   }

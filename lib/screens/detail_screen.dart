@@ -1,13 +1,14 @@
 import 'package:comment_box/comment/comment.dart';
 import 'package:flutter/material.dart';
-import 'package:portal_berita/api/GetDetailProfileResponse.dart';
 import 'package:portal_berita/api/GetDetailResponse.dart';
 import 'package:portal_berita/screens/profile_screen.dart';
 import 'package:portal_berita/screens/utils/alerts.dart';
 import 'package:portal_berita/screens/utils/login_pref.dart';
 import '../api/GetCommentResponse.dart';
+import '../api/GetDetailProfileResponse.dart';
 import '../api/api.dart';
 import 'package:portal_berita/constants.dart';
+import 'package:portal_berita/screens/utils/data_user.dart' as UserModel;
 
 import 'auth/Login.dart';
 
@@ -21,6 +22,16 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  UserModel.DataUser dataUser = UserModel.DataUser();
+
+  commentPicture(){
+    if (dataUser.profileimage != "null" && dataUser.profileimage != null ) {
+      return Api.IMG_URL + "profile_user/" + dataUser.profileimage!;
+    }
+    return "https://www.pngkey.com/png/full/349-3499617_person-placeholder-person-placeholder.png";
+  }
+
+
   Future<GetDetailProfileResponse>? getProfile;
   TextEditingController commentController = TextEditingController();
   Future refresh() async {
@@ -36,7 +47,12 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<GetCommentResponse>? getComment;
+  getLoginPref(){
+    LoginPref.getPref().then((value) {
 
+      dataUser = value;
+    });
+  }
 
   SubmitComment() async {
     LoginPref.checkPref().then((value) {
@@ -62,7 +78,9 @@ class _DetailScreenState extends State<DetailScreen> {
         print("Not validated");
       }
     });
-    var dataUser = await LoginPref.getPref();
+
+
+
     var komen = {
       "id_berita": widget.idBerita,
       "id_user": dataUser.idUser.toString(),
@@ -82,6 +100,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
 
   List filedata = [
+
   ];
 
 
@@ -90,6 +109,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     getDataDetailBerita();
+    getLoginPref();
     super.initState();
   }
 
@@ -183,7 +203,7 @@ class _DetailScreenState extends State<DetailScreen> {
             SizedBox(
               height: 300,
               child: CommentBox(
-                userImage: "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80",
+                userImage:  commentPicture(),
                 child: commentChild(),
                 labelText: 'Write a comment...',
                 withBorder: true,

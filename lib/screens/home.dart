@@ -29,11 +29,11 @@ class _HomeState extends State<Home> {
 
   DataUser dataUser = DataUser();
 
-  getUserData(){
+  getUserData() {
     LoginPref.checkPref().then((value) {
       if (value == true) {
         LoginPref.getPref().then((value) {
-          setState((){
+          setState(() {
             dataUser = DataUser(
               idUser: value.idUser,
               username: value.username,
@@ -41,14 +41,14 @@ class _HomeState extends State<Home> {
               profilepicture: value.profileimage,
             );
           });
-          print("HOME : " + value.profileimage.toString());
-
+          print("HOME : " + value.username.toString());
         });
+      } else {
+        dataUser = DataUser();
       }
-      dataUser = DataUser();
-
     });
   }
+
   @override
   void initState() {
     getUserData();
@@ -73,11 +73,12 @@ class _HomeState extends State<Home> {
               GestureDetector(
                 onTap: () {},
                 child: GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfileScreen( ))).then((value){
-
-                        getUserData();
-
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                            builder: (context) => ProfileScreen()))
+                        .then((value) {
+                      getUserData();
                     });
                   },
                   child: Container(
@@ -85,7 +86,13 @@ class _HomeState extends State<Home> {
                     height: 50,
                     width: 50,
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage((dataUser.profilepicture != "null" && dataUser.profilepicture != null ) ? Api.IMG_URL + "profile_user/" + dataUser.profilepicture : "https://www.pngkey.com/png/full/349-3499617_person-placeholder-person-placeholder.png"),
+                      backgroundImage: NetworkImage((dataUser.profilepicture !=
+                                  "null" &&
+                              dataUser.profilepicture != null)
+                          ? Api.IMG_URL +
+                              "profile_user/" +
+                              dataUser.profilepicture
+                          : "https://www.pngkey.com/png/full/349-3499617_person-placeholder-person-placeholder.png"),
                     ),
                   ),
                 ),
@@ -155,8 +162,15 @@ class _HomeState extends State<Home> {
                       height: 80,
                       width: 80,
                       child: CircleAvatar(
-                          backgroundImage:
-                          NetworkImage((dataUser.profilepicture != "null" && dataUser.profilepicture != null ) ? Api.IMG_URL + "profile_user/" + dataUser.profilepicture : "https://www.pngkey.com/png/full/349-3499617_person-placeholder-person-placeholder.png"),),
+                        backgroundImage: NetworkImage(
+                          (dataUser.profilepicture != "null" &&
+                                  dataUser.profilepicture != null)
+                              ? Api.IMG_URL +
+                                  "profile_user/" +
+                                  dataUser.profilepicture
+                              : "https://www.pngkey.com/png/full/349-3499617_person-placeholder-person-placeholder.png",
+                        ),
+                      ),
                     ),
                     onTap: () {
                       // Update the state of the app.
@@ -191,8 +205,9 @@ class _HomeState extends State<Home> {
                   ),
                   ListItem(
                     title: 'Tentang Aplikasi',
-                    ontap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => TentangApp()));
+                    ontap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => TentangApp()));
                     },
                   ),
                   ListItem(

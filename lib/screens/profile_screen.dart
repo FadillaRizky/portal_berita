@@ -110,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                     errorBuilder: (context, obj, stacktrace) {
-                      return Image.asset("assets/images/place_holder.jpeg");
+                      return Image.asset("assets/images/place_holder.jpeg",fit: BoxFit.cover,);
                     },
                   ))),
             ),
