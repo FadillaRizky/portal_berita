@@ -22,6 +22,15 @@ class _EditProfileState extends State<EditProfile> {
   var image;
 
   String? path;
+  // String? path1;
+  // String? path2;
+
+  // var ktpImage = path ;
+
+  // Map<String,dynamic> data = {
+  //   "ktp_image" : path,
+  //   ""
+  // };
 
   @override
   void initState() {
@@ -50,6 +59,7 @@ class _EditProfileState extends State<EditProfile> {
                   height: 100,
                   width: 100,
                   child: GestureDetector(
+                    // key: ,
                     onTap: () async {
                       List<Media>? res = await ImagesPicker.pick(
                         count: 3,

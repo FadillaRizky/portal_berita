@@ -39,6 +39,7 @@ class _LoginState extends State<Login> {
       "email": email,
       "password": password,
     };
+    // data["ktp_image"] = path
 
     Api.submitLogin(data).then((value) async {
         //ketika pesan nya bukan successful

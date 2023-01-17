@@ -85,17 +85,17 @@ class Api {
       throw "Unable to submit Login";
     }
   }
-  static Future<LoginResponse> submitPicture(String picture) async {
-    var url = BASE_URL + "";
-// print(url);
-    var response = await http.post(Uri.parse(url),body: picture);
-
-    if (response.statusCode == 200) {
-      return LoginResponse.fromJson(jsonDecode(response.body));
-    } else {
-      throw "Unable to submit Picture";
-    }
-  }
+//   static Future<LoginResponse> submitPicture(String picture) async {
+//     var url = BASE_URL + "";
+// // print(url);
+//     var response = await http.post(Uri.parse(url),body: picture);
+//
+//     if (response.statusCode == 200) {
+//       return LoginResponse.fromJson(jsonDecode(response.body));
+//     } else {
+//       throw "Unable to submit Picture";
+//     }
+//   }
   static Future<RegisterResponse> submitRegister(Map<String,String>dataUser) async {
     var url = BASE_URL + "/register_user.php";
 
